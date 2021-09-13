@@ -1,11 +1,14 @@
 // LIB IMPORTS
 import React from "react";
-import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
+
+//style
+import styled from "styled-components";
 
 // ASSETS
 import Logo from "../../public/argentBankLogo.png";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
 // TODO
 // TODO: Add Link to Sign In with react-router-dom
@@ -13,21 +16,36 @@ import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * @name Header
- * @returns {React.Component}
+ * @description Header of the application
+ * @param {object} props
+ * @returns {JSX}
  */
-
-function Header() {
+function Header({ isLoggedIn, user }) {
   return (
     <MainNav>
-      <MainNavLogo href="./index.html">
+      <MainNavLogo to="/">
         <img src={Logo} alt="" />
         <h1 className="sr-only">Argent Bank</h1>
       </MainNavLogo>
+
       <div>
-        <MainNavItem href="./sign-in.html">
-          <FontAwesomeIcon icon={faUserCircle} />
-          Sign In
-        </MainNavItem>
+        {isLoggedIn ? (
+          <>
+            <MainNavItem to="/user">
+              <FontAwesomeIcon icon={faUserCircle} />
+              Tony
+            </MainNavItem>
+            <MainNavItem to="/sign-out">
+              <FontAwesomeIcon icon={faSignOutAlt} />
+              Sign Out
+            </MainNavItem>
+          </>
+        ) : (
+          <MainNavItem to="/sign-in">
+            <FontAwesomeIcon icon={faUserCircle} />
+            Sign In
+          </MainNavItem>
+        )}
       </div>
     </MainNav>
   );
@@ -46,7 +64,7 @@ const MainNav = styled.nav`
   }
 `;
 
-const MainNavLogo = styled.a`
+const MainNavLogo = styled(Link)`
   display: flex;
   align-items: center;
 
@@ -56,7 +74,7 @@ const MainNavLogo = styled.a`
   }
 `;
 
-const MainNavItem = styled.a`
+const MainNavItem = styled(Link)`
   text-decoration: none;
   margin-right: 0.5rem;
 
