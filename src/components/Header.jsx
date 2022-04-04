@@ -10,9 +10,11 @@ import styled from "styled-components";
 import Logo from "../../public/argentBankLogo.png";
 import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
-// TODO
-// TODO: Add Link to Sign In with react-router-dom
-// TODO: Add Link to Home on the logo with react-router-dom
+// Redux state
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserProfile } from "../features/UserProfile/userProfileSlice";
+import { signOut } from "../features/Login/userSlice";
+import { reset } from "../features/UserProfile/userProfileSlice";
 
 /**
  * @name Header
@@ -20,7 +22,21 @@ import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
  * @param {object} props
  * @returns {JSX}
  */
-function Header({ isLoggedIn, user }) {
+function Header() {
+  const dispatch = useDispatch();
+  const userInfo = useSelector(selectUserProfile);
+
+  let isLoggedIn = false;
+
+  if (userInfo.email) {
+    isLoggedIn = true;
+  }
+
+  const handleSignOut = () => {
+    dispatch(signOut());
+    dispatch(reset());
+  };
+
   return (
     <MainNav>
       <MainNavLogo to="/">
@@ -33,9 +49,9 @@ function Header({ isLoggedIn, user }) {
           <>
             <MainNavItem to="/user">
               <FontAwesomeIcon icon={faUserCircle} />
-              Tony
+              {userInfo.firstName}
             </MainNavItem>
-            <MainNavItem to="/sign-out">
+            <MainNavItem onClick={handleSignOut} to="/">
               <FontAwesomeIcon icon={faSignOutAlt} />
               Sign Out
             </MainNavItem>

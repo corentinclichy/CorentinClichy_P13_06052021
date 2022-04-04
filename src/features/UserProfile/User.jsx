@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 // Style
 import styled from "styled-components";
 
 // Components
-import AccountTransaction from "../components/AccountTransaction";
+import AccountTransaction from "../../components/AccountTransaction";
 
 // Data
-import { accountTransactions } from "../data";
+import { accountTransactions } from "../../data";
+import { fetchUserProfile, selectUserProfile } from "./userProfileSlice";
+import { selectUserData } from "../Login/userSlice";
 
 /**
  * @name User
@@ -16,13 +20,30 @@ import { accountTransactions } from "../data";
  * @returns {JSX}
  */
 function User() {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const { token, isConnected } = useSelector(selectUserData);
+
+  useEffect(() => {
+    dispatch(fetchUserProfile({ token }));
+  }, [dispatch]);
+
+  const user = useSelector(selectUserProfile);
+
+  if (isConnected === null) {
+    history.push("/sign-in");
+  }
+
+  const fullName = `${user.firstName} ${user.lastName}`;
+
   return (
     <>
       <HeaderContainer>
         <h1>
           Welcome back
           <br />
-          Tony Jarvis!
+          {fullName}
         </h1>
         <EditBtn>Edit Name</EditBtn>
       </HeaderContainer>

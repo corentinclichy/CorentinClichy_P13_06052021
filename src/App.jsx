@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Route, Switch } from "react-router";
 import { useLocation } from "react-router-dom";
 
@@ -12,8 +12,13 @@ import Home from "./pages/Home";
 import Footer from "./components/Footer";
 
 // Pages
-import SignIn from "./pages/SignIn";
-import User from "./pages/User";
+import SignIn from "../src/features/Login/SignIn";
+import User from "../src/features/UserProfile/User";
+
+// Redux
+import { useDispatch } from "react-redux";
+import { signOut } from "./features/Login/userSlice";
+import { reset } from "./features/UserProfile/userProfileSlice";
 
 /**
  * @name App
@@ -22,6 +27,10 @@ import User from "./pages/User";
  * @returns {JSX}
  */
 function App() {
+  const dispatch = useDispatch();
+
+  const [firstTimeLoad, setFirstTimeLoad] = useState(true);
+
   // Get the location from the react-router-dom
   const location = useLocation();
   // Check if location.pathname is equal to "/sign-in"
@@ -29,6 +38,30 @@ function App() {
     location.pathname === "/sign-in" || location.pathname === "/user"
       ? "true"
       : "";
+
+  //Access to local storage and check if remember me is checked
+  const persistLocalStorageState = JSON.parse(
+    localStorage.getItem("persist:UserData")
+  );
+
+  // Get the value of remember me state (true or false)
+  const isRememberMe =
+    persistLocalStorageState &&
+    JSON.parse(persistLocalStorageState.user).data.isRememberMe;
+
+  useEffect(() => {
+    console.info("First time load", firstTimeLoad);
+
+    if (firstTimeLoad) {
+      setFirstTimeLoad(false);
+      if (!isRememberMe) {
+        console.info("Fire clearing localStorage");
+        dispatch(signOut());
+        dispatch(reset());
+      }
+    }
+    return;
+  }, [firstTimeLoad]);
 
   return (
     <AppContainer>
