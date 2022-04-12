@@ -16,38 +16,37 @@ import security from "../../public/icon-security.png";
  * @param {object} Name, Description, Icon
  * @returns {JSX}
  */
-function FeatureCard({ name, description, icon }) {
-  const iconData = {};
+function FeatureCard ({ name, description, icon }) {
+    const iconData = {};
 
-  switch (icon) {
-    case "chat":
-      iconData.iconImage = chat;
-      iconData.alt = "chat icon";
-      break;
-    case "money":
-      iconData.iconImage = money;
-      iconData.alt = "chat icon";
-      break;
-    case "security":
-      iconData.iconImage = security;
-      iconData.alt = "chat icon";
-      break;
-    default:
-      console.log("icon not found");
-      break;
-  }
+    switch (icon) {
+        case "chat":
+            iconData.iconImage = chat;
+            iconData.alt = "chat icon";
+            break;
+        case "money":
+            iconData.iconImage = money;
+            iconData.alt = "chat icon";
+            break;
+        case "security":
+            iconData.iconImage = security;
+            iconData.alt = "chat icon";
+            break;
+        default:
+            console.log("icon not found");
+            break;
+    }
 
-  return (
-    <FeatureItem>
-      <FeatureItemIcon src={iconData.iconImage} alt={iconData.alt} />
-      <FeatureItemTitle>{name}</FeatureItemTitle>
-      <p>{description}</p>
-    </FeatureItem>
-  );
+    return (
+        <FeatureItem>
+            <FeatureItemIcon src={iconData.iconImage} alt={iconData.alt} />
+            <FeatureItemTitle>{name}</FeatureItemTitle>
+            <p>{description}</p>
+        </FeatureItem>
+    );
 }
 
 // Styles
-
 const FeatureItem = styled.div`
   flex: 1;
   padding: 2.5rem;
