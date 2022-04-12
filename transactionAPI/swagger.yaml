@@ -1,0 +1,259 @@
+swagger: '2.0'
+info:
+  title: Argent Bank transaction API documentation
+  description: Contains API endpoints for the future transaction feature implementation
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+host: localhost:3001
+basePath: /api/v1
+schemes:
+  - http
+paths:
+  /user/transactions/:
+    get:
+      tags:
+        - Transactions Module
+      summary: Get all transactions from a specific user
+      description: API to get all transactions of the user (last 30 days)
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer JWT token
+          type: string
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: All transactions successfully retrived
+          schema:
+            allOf:
+            - $ref: '#/definitions/ApiResponse'
+            - type: object
+              properties:
+                body:
+                  type: object
+                  properties:
+                    transactions:
+                      type: array
+                      description: the transactions corresponding to the user
+                      items:
+                        $ref: "#/definitions/TransactionReadOnly"
+        '400':
+          description: Invalid Fields
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /user/transactions/all/{dateRange}:
+    get:
+      tags:
+        - Transactions Module
+      summary: Get all transactions from a specific date range
+      description: API to get all transactions of the user within a specific data range
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          type: string
+          required: true
+        - in: path
+          name: dateRange
+          description: date range
+          type: string
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: All transactions successfully retrived
+          schema:
+            allOf:
+            - $ref: '#/definitions/ApiResponse'
+            - type: object
+              properties:
+                body:
+                  type: object
+                  properties:
+                    transactions:
+                      type: array
+                      description: the transactions corresponding to the user
+                      items:
+                        $ref: "#/definitions/TransactionReadOnly"
+        '400':
+          description: Invalid Fields
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /user/transactions/{id}:
+    get:
+      tags:
+        - Transactions Module
+      security:
+        - Bearer: []
+      summary: Get transaction by id
+      description: get a specific transaction using the transaction id parameter
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer JWT token
+          type: string
+          required: true
+        - in: path
+          name: id
+          description: Id of the transaction to retrieve
+          type: string
+          required: true
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction successfully retrived
+          schema:
+            allOf:
+            - $ref: '#/definitions/ApiResponse'
+            - type: object
+              properties:
+                body:
+                  $ref: "#/definitions/TransactionFull"
+        '400':
+          description: Invalid Fields
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ApiResponse"
+      
+    put:
+      tags:
+        - Transactions Module
+      security:
+        - Bearer: []
+      summary: update a transaction by Id
+      description: API to put new details to a transaction according transactionId parameter
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer JWT token
+          type: string
+          required: true
+        - in: path
+          name: id
+          description: id of the transaction
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: payload
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionEditable'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction successfully updated
+          schema:
+            allOf:
+            - $ref: '#/definitions/ApiResponse'
+            - type: object
+              properties:
+                body:
+                  $ref: "#/definitions/TransactionFull"
+        '400':
+          description: Invalid Fields
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ApiResponse"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+  TransactionFull:
+    allOf:
+    - $ref: "#/definitions/TransactionReadOnly"
+    - $ref: "#/definitions/TransactionEditable"
+  TransactionReadOnly:
+    type: object
+    required:
+    - id
+    - date
+    - name
+    - amount
+    - type
+    properties:
+      id:
+        type: string
+        description: Unique id of a transaction
+        example: 64379YUROEJFEHF0332A
+      date:
+        type: string
+        format: date-time
+        description: The Date of the transaction
+        example: '2022-09-18T09:00:00'
+      description:
+        type: string
+        description: transaction name
+        example: Rolex Inc
+      amount:
+        type: number
+        format: float
+        description: The amount of the transaction
+        example: 5000
+      type:
+        type: string
+        description: Transaction type 
+        enum:
+        - credit card
+        - check
+        - cash
+        - transfer
+        - fees
+  
+  TransactionEditable:
+    type: object
+    properties:
+      category:
+        type: string
+        description: The category of the transaction
+        example: Crypto
+      notes:
+        type: string
+        description: notes about this transaction
+        example: bitcoin investment
+        
+        
